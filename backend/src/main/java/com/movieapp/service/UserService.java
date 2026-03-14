@@ -4,20 +4,32 @@ import com.movieapp.model.User;
 import com.movieapp.repository.UserRepository;
 import com.movieapp.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+import com.movieapp.hash.hashTable;
 
 import java.util.List;
 
 @Service
 public class UserService {
+    private final hashTable hashTable = new hashTable();
+    private final User user;
     private final UserRepository userRepository;
+    private final hashTable passwordHasher; // ✅ Instance
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.passwordHasher = new hashTable(1000); // Size = 1000
     }
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+    }
+
+    public User createUser(User user) {
+        // Hash the password before saving
+        String hashedPassword = hashTable.hashItem(user.getPassword());
+        user.setPassword(hashedPassword);
+        return userRepository.save(user);
     }
 
     public User getUserByUsername(String username) {

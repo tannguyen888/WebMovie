@@ -24,4 +24,11 @@ public class Episode {
 
     @Column(nullable = false)
     private int episodeNumber;
+
+    public Episode(String title, String description, String type, int episodeNumber) {
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.episodeNumber = episodeNumber;
+    }
 }

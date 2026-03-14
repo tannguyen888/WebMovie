@@ -40,9 +40,62 @@ public class User implements UserDetails {
         this.status = "active";
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
+    }
+
+    @Override
+    public Boolean isAdmin() {
+        return "admin".equals(role);
     }
 
     @Override
@@ -61,7 +114,16 @@ public class User implements UserDetails {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public boolean isEnabled() {
         return "active".equals(status);
     }
+
+    public static void main(String[] args) {
+        User user = new User("john_doe", "password123", "user");
+        System.out.println("Username: " + user.getUsername());
 }
