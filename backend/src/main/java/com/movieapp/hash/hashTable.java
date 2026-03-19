@@ -54,4 +54,34 @@ public class hashTable {
 
     }
 
+    public void collision (String key) {
+        int hashLoc = hashfunction(key);
+        while (table[hashLoc] != null && !table[hashLoc].equals("**DEL**")) {
+            System.out.println("Collision at " + hashLoc + " for key: " + key);
+            hashLoc = (hashLoc + 1) % size;
+        }
+    }
+
+    public void delete(String key) {
+        int hashLoc = hashfunction(key);
+        while (table[hashLoc] != null && !table[hashLoc].equals("**DEL**")) {
+            if (table[hashLoc].equals(key)) {
+                table[hashLoc] = "**DEL**";
+                return;
+            }
+            hashLoc = (hashLoc + 1) % size;
+        }
+    }
+    public String getItem(String key){
+        int hasloc = hashfunction(key);
+        while(table[hasloc] != null && !table[hasloc].equals("**DEL**")) {
+            if (table[hasloc].equals(key)) {
+                return table[hasloc];
+            }
+            hasloc = (hasloc + 1) % size;
+        }
+        return null;
+    }
+    
+
 }

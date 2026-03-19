@@ -17,4 +17,9 @@ public class Genre {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    public Genre(String name) {
+        this.name = name;
+    }
+    
 }

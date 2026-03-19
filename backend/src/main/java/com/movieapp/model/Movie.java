@@ -25,4 +25,12 @@ public class Movie {
 
     private String posterPath;
     private String year;
+
+    public Movie(String title, String genre, String description, String posterPath, String year) {
+        this.title = title;
+        this.genre = genre;
+        this.description = description;
+        this.posterPath = posterPath;
+        this.year = year;
+    }
 }

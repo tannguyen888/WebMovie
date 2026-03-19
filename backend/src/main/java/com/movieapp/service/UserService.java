@@ -13,7 +13,7 @@ public class UserService {
     private final hashTable hashTable = new hashTable();
     private final User user;
     private final UserRepository userRepository;
-    private final hashTable passwordHasher; // ✅ Instance
+    private final hashTable passwordHasher; 
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;

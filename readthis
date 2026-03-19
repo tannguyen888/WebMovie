@@ -1,0 +1,42 @@
+📚 PHÂN LOẠI METHODS
+1️⃣ BUILT-IN (Từ JpaRepository)
+Spring cung cấp sẵn, chỉ cần .save(), .findById(), etc:
+
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Long> {
+    // ✅ Built-in - có sẵn từ JpaRepository
+    Review save(Review review);              // INSERT/UPDATE
+    Review findById(Long id);                // SELECT by id
+    List<Review> findAll();                  // SELECT all
+    void deleteById(Long id);                // DELETE by id
+    boolean existsById(Long id);             // EXISTS check
+    long count();                            // COUNT
+}
+
+CUSTOM (Bạn TỰ VIẾT tên)
+Bạn viết tên theo Spring Convention, Spring tự generate SQL:
+
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Long> {
+    
+    // ✅ CUSTOM - Bạn viết tên
+    // Spring tự hiểu: findBy + UserIdAndMovieId
+    // = WHERE user_id = ? AND movie_id = ?
+    Review findByUserIdAndMovieId(Long userId, Long movieId);
+    
+    // ✅ CUSTOM - Tương tự
+    boolean existsByUserIdAndMovieId(Long userId, Long movieId);
+    
+    // ✅ CUSTOM
+    List<Review> findByMovieId(Long movieId);
+    
+    // ✅ CUSTOM
+    long countByMovieId(Long movieId);
+}
+// phan tich 
+Method name: findByUserIdAndMovieId
+             └─ find    = SELECT
+             └─ By      = WHERE clause
+             └─ UserId  = field "userId"
+             └─ And     = AND operator
+             └─ MovieId = field "movieId"

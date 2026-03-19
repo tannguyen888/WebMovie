@@ -34,4 +34,11 @@ public class Favorite {
     protected void onCreate() {
         createdAt = System.currentTimeMillis();
     }
+
+    public Favorite(User user, String movieId, String title, String posterPath) {
+        this.user = user;
+        this.movieId = movieId;
+        this.title = title;
+        this.posterPath = posterPath;
+    }
 }
