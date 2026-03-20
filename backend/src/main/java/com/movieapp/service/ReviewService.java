@@ -52,6 +52,7 @@ public class ReviewService {
      * 🎯 CREATE - Thêm review mới
      * ============================================
      */
+    @Transactional
     public ReviewResponse addReview(Long userId, Long movieId, ReviewRequest request) {
         try {
             if (request.getComment() == null || request.getComment().isEmpty()) {
@@ -64,27 +65,23 @@ public class ReviewService {
                 throw new IllegalArgumentException("Rating must be between 1 and 5");
             }
 
-            // 2️⃣ FETCH USER
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-            // 3️⃣ FETCH MOVIE
             Movie movie = movieRepository.findById(movieId)
                     .orElseThrow(() -> new IllegalArgumentException("Movie not found"));
 
-            // 4️⃣ CHECK DUPLICATE
             if (reviewRepository.existsByUserIdAndMovieId(userId, movieId)) {
                 throw new IllegalArgumentException("You already reviewed this movie");
             }
-            // 5️⃣ CREATE & SAVE
-            Review newReview = new Review(userId, movieId, request.getRating(), request.getComment());
-            Review savedReview = reviewRepository.save(newReview); // ✅ Lưu return value
 
-            // 6️⃣ CONVERT & RETURN
+            Review newReview = new Review(userId, movieId, request.getRating(), request.getComment());
+            Review savedReview = reviewRepository.save(newReview);
+
             return ReviewResponse.from(savedReview);
 
         } catch (Exception e) {
-            // TODO: handle exception
+            throw new RuntimeException("Error adding review: " + e.getMessage());
         }
     }
 
@@ -150,37 +147,10 @@ public class ReviewService {
      * 
      * Return: ReviewResponse
      */
-    @Transactional // TODO: Thêm annotation này (atomic transaction)
-    public ReviewResponse addReview(Long userId, Long movieId, ReviewRequest request) {
-        // TODO: Implement here
-        return null;
-    }
-
-    /**
-     * ============================================
-     * 📖 READ - Lấy review một lần
-     * ============================================
-     */
-
-    /**
-     * TODO: Viết method getReviewById()
-     * 
-     * Parameters:
-     * - Long id: Review ID
-     * 
-     * Steps:
-     * 1️⃣ TODO: Query review by id
-     * - reviewRepository.findById(id)
-     * - .orElseThrow(() -> new ResourceNotFoundException("Review not found"))
-     * 
-     * 2️⃣ TODO: Convert to ReviewResponse DTO
-     * - ReviewResponse.from(review)
-     * 
-     * Return: ReviewResponse
-     */
     public ReviewResponse getReviewById(Long id) {
-        // TODO: Implement here
-        return null;
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+        return ReviewResponse.from(review);
     }
 
     /**
@@ -425,5 +395,9 @@ public class ReviewService {
     @Transactional
     public void deleteAllByUser(Long userId) {
         // TODO: Implement here
+    }
+
+    public Review saveReview(Review review) {
+        return reviewRepository.save(review);
     }
 }

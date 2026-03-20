@@ -1,19 +1,18 @@
+package com.movieapp.hash;
 
-import java.com.movieapp.model.User;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class hashTable {
     private String[] table;
     private int size;
-    private final User user;
 
     public hashTable(int size) {
         this.size = size;
         this.table = new String[size];
-        this.user = new User();
     }
 
-    public static String hashItem(Srting key) {
+    public static String hashItem(String key) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] hash = md.digest(key.getBytes());
 
@@ -50,11 +49,11 @@ public class hashTable {
             sum += key.charAt(i) * weight;
             weight++;
         }
-        return sum % maxItem;
+        return sum % size;
 
     }
 
-    public void collision (String key) {
+    public void collision(String key) {
         int hashLoc = hashfunction(key);
         while (table[hashLoc] != null && !table[hashLoc].equals("**DEL**")) {
             System.out.println("Collision at " + hashLoc + " for key: " + key);
@@ -72,9 +71,10 @@ public class hashTable {
             hashLoc = (hashLoc + 1) % size;
         }
     }
-    public String getItem(String key){
+
+    public String getItem(String key) {
         int hasloc = hashfunction(key);
-        while(table[hasloc] != null && !table[hasloc].equals("**DEL**")) {
+        while (table[hasloc] != null && !table[hasloc].equals("**DEL**")) {
             if (table[hasloc].equals(key)) {
                 return table[hasloc];
             }
@@ -82,6 +82,5 @@ public class hashTable {
         }
         return null;
     }
-    
 
 }

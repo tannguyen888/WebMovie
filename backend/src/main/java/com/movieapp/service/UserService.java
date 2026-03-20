@@ -3,21 +3,17 @@ package com.movieapp.service;
 import com.movieapp.model.User;
 import com.movieapp.repository.UserRepository;
 import com.movieapp.exception.ResourceNotFoundException;
-import org.springframework.stereotype.Service;
 import com.movieapp.hash.hashTable;
-
+import org.springframework.stereotype.Service;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Service
 public class UserService {
-    private final hashTable hashTable = new hashTable();
-    private final User user;
     private final UserRepository userRepository;
-    private final hashTable passwordHasher; 
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordHasher = new hashTable(1000); // Size = 1000
     }
 
     public User getUserById(Long id) {
@@ -27,8 +23,12 @@ public class UserService {
 
     public User createUser(User user) {
         // Hash the password before saving
-        String hashedPassword = hashTable.hashItem(user.getPassword());
-        user.setPassword(hashedPassword);
+        try {
+            String hashedPassword = hashTable.hashItem(user.getPassword());
+            user.setPassword(hashedPassword);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password: " + e.getMessage());
+        }
         return userRepository.save(user);
     }
 

@@ -1,14 +1,9 @@
 package com.movieapp.controller;
 
-import com.movieapp.dto.request.AuthRequest;
-import com.movieapp.dto.response.AuthResponse;
-import com.movieapp.service.AuthService;
-import com.movieapp.security.JwtService;
-import com.movieapp.util.Constants;
-import org.springframework.http.HttpStatus;
+import com.movieapp.model.Review;
+import com.movieapp.service.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/reviews")

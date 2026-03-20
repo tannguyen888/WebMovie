@@ -1,71 +1,42 @@
-package com.movieapp.model;
+package com.movieapp.dto.response;
 
+import lombok.Data;
+import com.movieapp.model.Review;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Entity
-@Table(name = "reviews")
 @Data
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Review {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ReviewResponse {
     private Long id;
-
-    @Column(nullable = false, unique = true)
     private Long userId;
-
-    @Column(nullable = false, unique = true)
     private Long movieId;
-    @Column(nullable = false)
     private int rating;
-
-    @Column(columnDefinition = "TEXT")
     private String comment;
-
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @Column(nullable = false, updatable = false)
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    public ReviewResponse() {
     }
 
-    public Review(Long userId, Long movieId, int rating, String comment) {
+    public ReviewResponse(Long id, Long userId, Long movieId, int rating, String comment, LocalDateTime createdAt,
+            LocalDateTime updatedAt) {
+        this.id = id;
         this.userId = userId;
         this.movieId = movieId;
         this.rating = rating;
         this.comment = comment;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    @Override
-    public String toString() {
-        return "Review{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", movieId=" + movieId +
-                ", rating=" + rating +
-                ", comment='" + comment + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
+    public static ReviewResponse from(Review review) {
+        return new ReviewResponse(
+                review.getId(),
+                review.getUserId(),
+                review.getMovieId(),
+                review.getRating(),
+                review.getComment(),
+                review.getCreatedAt(),
+                review.getUpdatedAt());
     }
 
     public Long getId() {
@@ -123,5 +94,4 @@ public class Review {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 }
