@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Optional;
 
 import com.movieapp.model.Review;
 import com.movieapp.model.User;
@@ -14,7 +15,7 @@ import com.movieapp.model.User;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    Review findByUserIdAndMovieId(Long userId, Long movieId);
+    Optional<Review> findByUserIdAndMovieId(Long userId, Long movieId);
 
     boolean existsByUserIdAndMovieId(Long userId, Long movieId);
 
@@ -22,13 +23,17 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByUserId(Long userId);
 
+    Page<Review> findByUserId(Long userId, Pageable pageable);
+
+    void deleteByMovieId(Long movieId);
+
+    void deleteByUserId(Long userId);
+
     List<Review> findByMovieId(Long movieId);
 
     long countByMovieId(Long movieId);
 
     Page<Review> findByMovieId(Long movieId, Pageable pageable);
-
-    void from(User user, Long movieId, String rating, String comment);
 
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.movieId = :movieId")
     Double getAverageRating(@Param("movieId") Long movieId);

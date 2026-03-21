@@ -33,7 +33,7 @@ public class MovieService {
     }
 
     public List<Movie> getMoviesByYear(String year) {
-        return movieRepository.findByYear(year);
+        return movieRepository.findByReleaseYear(year);
     }
 
     public Movie saveMovie(Movie movie) {
@@ -54,13 +54,22 @@ public class MovieService {
         if (updatedMovie.getPosterPath() != null) {
             movie.setPosterPath(updatedMovie.getPosterPath());
         }
-        if (updatedMovie.getYear() != null) {
-            movie.setYear(updatedMovie.getYear());
+        if (updatedMovie.getReleaseYear() != null) {
+            movie.setReleaseYear(updatedMovie.getReleaseYear());
         }
         return movieRepository.save(movie);
     }
 
     public void deleteMovie(Long id) {
         movieRepository.deleteById(id);
+    }
+
+    public List<Movie> getPopularMovies() {
+        return movieRepository.findPopularMovies();
+
+    }
+
+    public List<Movie> getPopularTvShows() {
+        return movieRepository.findPopularTvShows();
     }
 }

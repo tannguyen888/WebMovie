@@ -23,12 +23,14 @@ public class Favorite {
 
     private String posterPath;
 
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private Long createdAt;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = System.currentTimeMillis();
+        if (createdAt == null) {
+            createdAt = System.currentTimeMillis();
+        }
     }
 
     public Favorite() {

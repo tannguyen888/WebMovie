@@ -2,12 +2,15 @@ import "./App.css";
 import Banner from "./Banner";
 import Header from "./Header";
 import MovieList from "./MovieList";
+import MoviewDisplay from "./MoviewDisplay";
+import MoviePlayer from "./MoviePlayer";
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // <- import này
-// bạn cần tạo component Home.jsx
-import Register from "./Register"; // component Register.jsx
-import Login from "./login"; // component Login.jsx
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Register from "./Register";
+import Login from "./login";
 import Favorites from "./Favorites";
+const API_BASE = "http://localhost:8080/api";
 
 function App() {
   const [trendingMovies, setTrendingMovies] = useState([]);
@@ -17,45 +20,34 @@ function App() {
   const handleSearch = async (value) => {
     if (!value) return setSearchData([]);
 
-    const url = `https://api.themoviedb.org/3/search/movie?query=${value}&language=vi&page=1`;
+    const url = `${API_BASE}/search?q=${encodeURIComponent(value)}`;
 
     try {
-      const res = await fetch(url, {
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      });
-
+      const res = await fetch(url);
       const data = await res.json();
-      setSearchData(data.results || []);
+      const movies = data?.content?.movies || [];
+      const tv = data?.content?.tv || [];
+      setSearchData([...movies, ...tv]);
     } catch (err) {
-      console.error(err);
+      console.error("Search error", err);
     }
   };
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const options = {
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      };
-
       try {
-        const [trending, topRated] = await Promise.all([
-          fetch("https://api.themoviedb.org/3/trending/movie/day?language=vi", options),
-          fetch("https://api.themoviedb.org/3/movie/top_rated?language=vi", options),
+        const [trendingRes, seriesRes] = await Promise.all([
+          fetch(`${API_BASE}/movies/popular`),
+          fetch(`${API_BASE}/tv/popular`),
         ]);
 
-        const trendingData = await trending.json();
-        const topRatedData = await topRated.json();
+        const trendingData = await trendingRes.json();
+        const seriesData = await seriesRes.json();
 
-        setTrendingMovies(trendingData.results);
-        setTopRatedMovies(topRatedData.results);
+        setTrendingMovies(trendingData?.content?.movies || []);
+        setTopRatedMovies(seriesData?.content?.tv || []);
       } catch (error) {
-        console.error(error);
+        console.error("Fetch movies error", error);
       }
     };
 
@@ -83,7 +75,8 @@ function App() {
             </>
           }
         />
-        <Route path="/movies" element={<MovieList title="Movies" data={trendingMovies} />} />
+        <Route path="/movies" element={<MoviewDisplay />} />
+        <Route path="/movie/:id" element={<MoviePlayer />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

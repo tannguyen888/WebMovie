@@ -1,5 +1,7 @@
 package com.movieapp.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,14 +30,34 @@ public class Movie {
     private String description;
 
     private String posterPath;
-    private String year;
+    private String releaseYear;
+    private String type;
+    private Integer rating;
+    private String embedUrl;
+    private Integer episode;
+    @OneToMany
+    @JoinColumn(name = "movie_id")
+    private Episode episodes1;
 
-    public Movie(String title, String genre, String description, String posterPath, String year) {
+    @Column(columnDefinition = "TEXT")
+    private String streamSources;
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Episode> episodes; // Danh sách các tập phim
+
+    public Movie(String title, String genre, String description, String posterPath, String releaseYear, Integer ep) {
         this.title = title;
         this.genre = genre;
         this.description = description;
         this.posterPath = posterPath;
-        this.year = year;
+        this.releaseYear = releaseYear;
+    }
+
+    public List<Episode> getEpisodes() {
+        return episodes;
+    }
+
+    public void setEpisodes(List<Episode> episodes) {
+        this.episodes = episodes;
     }
 
     public Long getId() {
@@ -78,11 +100,43 @@ public class Movie {
         this.posterPath = posterPath;
     }
 
-    public String getYear() {
-        return year;
+    public String getReleaseYear() {
+        return releaseYear;
     }
 
-    public void setYear(String year) {
-        this.year = year;
+    public void setReleaseYear(String releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public String getEmbedUrl() {
+        return embedUrl;
+    }
+
+    public void setEmbedUrl(String embedUrl) {
+        this.embedUrl = embedUrl;
+    }
+
+    public String getStreamSources() {
+        return streamSources;
+    }
+
+    public void setStreamSources(String streamSources) {
+        this.streamSources = streamSources;
     }
 }

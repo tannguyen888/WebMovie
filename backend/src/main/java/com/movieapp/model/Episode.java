@@ -15,20 +15,23 @@ public class Episode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+    @Column(columnDefinition = "TEXT")
+    private String episodeTitle;
 
-    private String description;
+    @Column(columnDefinition = "TEXT")
+    private String linkEmbed;
 
-    private String type;
+    @Column(columnDefinition = "TEXT")
+    private String linkM3u8;
 
-    @Column(nullable = false)
-    private int episodeNumber;
+    @ManyToOne
+    @JoinColumn(name = "movie_id", nullable = false)
+    private Movie movie; // Foreign key to Movie
 
-    public Episode(String title, String description, String type, int episodeNumber) {
-        this.title = title;
-        this.description = description;
-        this.type = type;
-        this.episodeNumber = episodeNumber;
+    public Episode(String episodeTitle, String linkEmbed, String linkM3u8, Movie movie) {
+        this.episodeTitle = episodeTitle;
+        this.linkEmbed = linkEmbed;
+        this.linkM3u8 = linkM3u8;
+        this.movie = movie;
     }
 }

@@ -18,7 +18,15 @@ const MovieProvider = ({ children }) => {
   const [trailerUrl, setTrailerUrl] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  const handleVideoTrailer = async (movieId) => {
+  const handleVideoTrailer = async (movie) => {
+    const tmdbId = movie?.tmdb?.id || movie?.id;
+    if (!tmdbId) {
+      setTrailerUrl("");
+      setIsOpen(false);
+      alert("Không tìm thấy trailer cho phim này.");
+      return;
+    }
+
     const options = {
       method: "GET",
       headers: {
@@ -29,13 +37,18 @@ const MovieProvider = ({ children }) => {
 
     try {
       const response = await fetch(
-        `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`,
+        `https://api.themoviedb.org/3/${movie?.tmdb?.type || "movie"}/${tmdbId}/videos?language=en-US`,
         options
       );
 
       const data = await response.json();
-      setTrailerUrl(data.results[0]?.key);
-      setIsOpen(true);
+      const key = data?.results?.[0]?.key;
+      if (key) {
+        setTrailerUrl(key);
+        setIsOpen(true);
+      } else {
+        alert("Không tìm thấy trailer cho phim này.");
+      }
     } catch (error) {
       console.log(error);
     }
