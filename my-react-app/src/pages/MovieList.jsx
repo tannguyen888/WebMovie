@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useState, useEffect, useMemo } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { backendApi } from "./api/axios";
+import { backendApi } from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
 const responsive = {

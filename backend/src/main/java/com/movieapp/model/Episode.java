@@ -23,7 +23,7 @@ public class Episode {
 
     @Column(columnDefinition = "TEXT")
     private String linkM3u8;
-
+  
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie; // Foreign key to Movie
@@ -34,4 +34,36 @@ public class Episode {
         this.linkM3u8 = linkM3u8;
         this.movie = movie;
     }
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public String getEpisodeTitle() {
+        return episodeTitle;
+    }
+    public void setEpisodeTitle(String episodeTitle) {
+        this.episodeTitle = episodeTitle;
+    }
+    public String getLinkEmbed() {
+        return linkEmbed;
+    }
+    public void setLinkEmbed(String linkEmbed) {
+        this.linkEmbed = linkEmbed;
+    }
+    public String getLinkM3u8() {
+        return linkM3u8;
+    }
+    public void setLinkM3u8(String linkM3u8) {
+        this.linkM3u8 = linkM3u8;
+    }
+    public Movie getMovie() {
+        return movie;
+    }
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
+
 }

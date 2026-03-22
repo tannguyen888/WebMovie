@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Register from "./Register";
 import Login from "./login";
-import Favorites from "./Favorites";
+import Favorites from "../Favorites";
 const API_BASE = "http://localhost:8080/api";
 
 function App() {

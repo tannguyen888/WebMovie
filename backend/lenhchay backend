@@ -1,0 +1,32 @@
+# 1. Di chuyển vào thư mục backend
+cd backend
+
+# 2. Chạy backend (compile + run)
+mvn clean spring-boot:run
+
+cd backend
+mvn clean install
+mvn spring-boot:run
+server.port=8081
+
+Test API trên browser:
+http://localhost:8080/api/movies/popular
+http://localhost:8080/api/tv/popular
+http://localhost:8080/api/search?q=batman
+
+
+Kill any running Java processes first. Run this in a new PowerShell terminal:
+
+Get-Process java -ErrorAction SilentlyContinue | Stop-Process -Force
+
+
+Then try one of these:
+# Option A: Skip clean, just rebuild and run (faster)
+mvn spring-boot:run
+
+# Option B: Clean with more aggressive deletion
+mvn clean -X spring-boot:run
+
+# Option C: Delete target manually, then run
+Remove-Item -Recurse -Force .\target
+mvn spring-boot:run
