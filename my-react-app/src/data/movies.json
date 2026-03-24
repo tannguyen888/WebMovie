@@ -1,0 +1,31 @@
+{
+  "movies": [
+    {
+      "id": 1,
+      "title": "Avatar",
+      "genre": "Sci-Fi",
+      "year": 2009,
+      "rating": 4.5,
+      "description": "A paraplegic Marine dispatched to the moon Pandora on a unique mission",
+      "posterPath": "avatar.jpg"
+    },
+    {
+      "id": 2,
+      "title": "The Matrix",
+      "genre": "Sci-Fi",
+      "year": 1999,
+      "rating": 4.3,
+      "description": "A computer hacker learns about the true nature of reality",
+      "posterPath": "matrix.jpg"
+    },
+    {
+      "id": 3,
+      "title": "Inception",
+      "genre": "Sci-Fi",
+      "year": 2010,
+      "rating": 4.4,
+      "description": "A skilled thief who steals corporate secrets through dream-sharing",
+      "posterPath": "inception.jpg"
+    }
+  ]
+}

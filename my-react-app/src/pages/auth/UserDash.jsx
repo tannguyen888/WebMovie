@@ -19,8 +19,6 @@ const UserDash = () => {
           console.error("Error fetching favorites:", err);
         })
         .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
     }
   }, []);
 
