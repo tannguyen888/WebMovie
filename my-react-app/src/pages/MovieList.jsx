@@ -1,9 +1,9 @@
-import PropTypes from "prop-types";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { backendApi } from "../api/axios";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import TrendingTabs from "../components/home/TrendingTabs";
 
 const responsive = {
   superLargeDesktop: {
@@ -24,40 +24,49 @@ const responsive = {
   },
 };
 
-const IMG_BASE = import.meta.env.VITE_IMG_URL || "https://image.tmdb.org/t/p/w500";
 const FALLBACK_POSTER = "/assets/poster.jpg";
 
-const MovieList = ({ title, data }) => {
+const MovieList = () => {
   const navigate = useNavigate();
+  const [movies, setMovies] = useState([]);
   const [favorites, setFavorites] = useState(new Set());
-  const [genres, setGenres] = useState([]);
   const [hoveredMovie, setHoveredMovie] = useState(null);
-
-  const posters = useMemo(() => {
-    return (data || []).reduce((acc, m) => {
-      const poster = m?.poster_url || m?.thumb_url;
-      const path = m?.poster_path;
-      const id = m?._id ?? m?.id;
-      acc[id] = poster || (path ? `${IMG_BASE}${path}` : FALLBACK_POSTER);
-      return acc;
-    }, {});
-  }, [data]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch genres from backend
-    backendApi.get("/api/movies/genres")
-      .then(res => setGenres(res.data))
-      .catch(err => console.error("Error fetching genres:", err));
+    const fetchMovies = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("http://localhost:8080/api/movies");
+        const list = Array.isArray(response.data)
+          ? response.data
+          : response.data?.content?.movies || response.data?.content || [];
+        setMovies(list);
+      } catch (err) {
+        console.error("Error fetching movies:", err);
+        setError("Failed to load movies");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Fetch user favorites
-    const token = localStorage.getItem("token");
-    if (token) {
-      backendApi.get("/api/favorites")
-        .then(res => {
-          const favSet = new Set(res.data.map(f => f.movieId));
-          setFavorites(favSet);
-        }).catch(err => console.error("Error fetching favorites:", err));
-    }
+    const fetchFavorites = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      try {
+        const res = await axios.get("http://localhost:8080/api/favorites", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const favSet = new Set(res.data.map((f) => f.movieId?.toString()));
+        setFavorites(favSet);
+      } catch (err) {
+        console.error("Error fetching favorites:", err);
+      }
+    };
+
+    fetchMovies();
+    fetchFavorites();
   }, []);
 
   const toggleFavorite = async (movie) => {
@@ -66,96 +75,86 @@ const MovieList = ({ title, data }) => {
       alert("Please login to add favorites");
       return;
     }
-    const isFav = favorites.has(movie.id.toString());
+
+    const movieId = movie.id?.toString();
+    const isFav = favorites.has(movieId);
+
     try {
       if (isFav) {
-        await backendApi.delete("/api/favorites", {
-          params: { movieId: movie.id }
+        await axios.delete("http://localhost:8080/api/favorites", {
+          params: { movieId: movie.id },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setFavorites(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(movie.id.toString());
-          return newSet;
+        setFavorites((prev) => {
+          const next = new Set(prev);
+          next.delete(movieId);
+          return next;
         });
       } else {
-        await backendApi.post("/api/favorites", null, {
+        await axios.post("http://localhost:8080/api/favorites", null, {
           params: {
             movieId: movie.id,
-            title: movie.title || movie.name,
-            posterPath: movie.poster_path
-          }
+            title: movie.title,
+            posterPath: movie.posterPath,
+          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setFavorites(prev => new Set(prev).add(movie.id.toString()));
+        setFavorites((prev) => new Set(prev).add(movieId));
       }
     } catch (err) {
       console.error("Toggle favorite error:", err);
     }
   };
 
+  if (loading) return <div className="p-10 text-white">Loading movies...</div>;
+  if (error) return <div className="p-10 text-white text-red-500">{error}</div>;
+  if (!movies.length) return <div className="p-10 text-white">No movies found</div>;
+
   return (
-    <div className="my-10 px-10 max-w-full ">
-      <h2 className="text-xl uppercase mb-4">{title}</h2>
-      <Carousel responsive={responsive} draggable={false}>
-        {data?.map((movie) => {
-          const movieId = movie?._id ?? movie?.id;
-          const posterUrl = posters[movieId] || FALLBACK_POSTER;
-          return (
-          <div
-            key={movieId}
-            className="bg-cover bg-no-repeat bg-center w-[200px] h-[300px] relative hover:scale-110 transition-transform duration-500 ease-in-out cursor-pointer group"
-            style={{
-              backgroundImage: `url(${posterUrl})`,
-            }}
-            onClick={() => navigate("/movies")}
-            onMouseEnter={() => setHoveredMovie(movieId)}
-            onMouseLeave={() => setHoveredMovie(null)}
-          >
-            <button
-              className="absolute top-2 right-2 z-20 text-red-500 text-2xl"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleFavorite({ ...movie, id: movieId, poster_path: posterUrl });
-              }}
-            >
-              {favorites.has(movieId?.toString()) ? "❤️" : "🤍"}
-            </button>
+    <div className="my-10 px-10 max-w-full space-y-14">
+      <section>
+        <h2 className="text-2xl text-white uppercase mb-4 font-bold">Popular Movies</h2>
+        <Carousel responsive={responsive} draggable={false}>
+          {movies.map((movie) => {
+            const movieId = movie?.id;
+            return (
+              <div
+                key={movieId}
+                className="bg-cover bg-no-repeat bg-center w-[200px] h-[300px] relative hover:scale-110 transition-transform duration-500 ease-in-out cursor-pointer group mx-2"
+                style={{
+                  backgroundImage: `url(${movie.posterPath || FALLBACK_POSTER})`,
+                }}
+                onClick={() => navigate(`/movie/${movieId}`)}
+                onMouseEnter={() => setHoveredMovie(movieId)}
+                onMouseLeave={() => setHoveredMovie(null)}
+              >
+                <button
+                  className="absolute top-2 right-2 z-20 text-2xl hover:scale-125 transition-transform"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite(movie);
+                  }}
+                >
+                  {favorites.has(movieId?.toString()) ? "❤️" : "🤍"}
+                </button>
 
-            {/* Genres dropdown on hover */}
-            {hoveredMovie === movieId && genres.length > 0 && (
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 text-white p-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="text-xs font-semibold mb-1">Genres:</div>
-                <div className="flex flex-wrap gap-1">
-                  {genres.slice(0, 3).map((genre) => (
-                    <span
-                      key={genre.id}
-                      className="bg-blue-600 text-xs px-2 py-1 rounded"
-                    >
-                      {genre.name}
-                    </span>
-                  ))}
-                  {genres.length > 3 && (
-                    <span className="text-xs text-gray-300">+{genres.length - 3} more</span>
-                  )}
-                </div>
+                {hoveredMovie === movieId && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-90 text-white p-3 z-10">
+                    <div className="text-sm font-semibold mb-1">{movie.title}</div>
+                    <div className="text-xs text-gray-300">{movie.genre}</div>
+                  </div>
+                )}
+
+                <div className="bg-black w-full h-full opacity-40 absolute top-0 left-0 z-0" />
               </div>
-            )}
+            );
+          })}
+        </Carousel>
+      </section>
 
-            <div className="bg-black w-full h-full opacity-40 absolute top-0 left-0 z-0" />
-            <div className="relative p-4 flex flex-col items-center justify-end h-full">
-              <h3 className="text-md uppercase text-center">
-                {movie.name || movie.title || movie.origin_name || movie.original_title}
-              </h3>
-            </div>
-          </div>
-        );})}
-      </Carousel>
+      <TrendingTabs />
     </div>
   );
-};
-
-MovieList.propTypes = {
-  title: PropTypes.string.isRequired,
-  data: PropTypes.array,
 };
 
 export default MovieList;

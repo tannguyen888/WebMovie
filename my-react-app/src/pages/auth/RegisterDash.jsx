@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { backendApi } from "../api/axios"
+import axios from "axios";
 
 export default function Register() {
   const [username, setUsername] = useState("");

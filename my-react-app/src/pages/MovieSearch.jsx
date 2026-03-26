@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { useContext, useState, useEffect } from "react";
-import { MovieContext } from "./MovieContext.jsx";
-import { backendApi } from "../api/axios.js";
+import { MovieContext } from "../context/MovieContext.jsx";
+import axios from "axios";
 
 const MovieSearch = ({ data }) => {
   const { handleMovieSearch } = useContext(MovieContext);

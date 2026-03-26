@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { backendApi } from "../api/axios.js";
+import axios from "axios";
 import Banner from "../baser/Banner.jsx";
 
 const UserDash = () => {

@@ -1,8 +1,9 @@
 package com.movieapp.service;
 
+import com.movieapp.exception.ResourceNotFoundException;
 import com.movieapp.model.Movie;
 import com.movieapp.repository.MovieRepository;
-import com.movieapp.exception.ResourceNotFoundException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -71,5 +72,11 @@ public class MovieService {
 
     public List<Movie> getPopularTvShows() {
         return movieRepository.findPopularTvShows();
+    }
+
+    public List<Movie> getTrendingMovies(String type, int limit) {
+        int size = Math.max(5, Math.min(limit, 50));
+        String normalizedType = (type == null || type.isBlank()) ? null : type.toLowerCase();
+        return movieRepository.findTrendingMovies(normalizedType, PageRequest.of(0, size));
     }
 }

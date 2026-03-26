@@ -35,9 +35,6 @@ public class Movie {
     private Integer rating;
     private String embedUrl;
     private Integer episode;
-    @OneToMany
-    @JoinColumn(name = "movie_id")
-    private Episode episodes1;
 
     @Column(columnDefinition = "TEXT")
     private String streamSources;
@@ -50,6 +47,7 @@ public class Movie {
         this.description = description;
         this.posterPath = posterPath;
         this.releaseYear = releaseYear;
+        this.episode = ep;
     }
 
     public List<Episode> getEpisodes() {
@@ -138,5 +136,13 @@ public class Movie {
 
     public void setStreamSources(String streamSources) {
         this.streamSources = streamSources;
+    }
+
+    public Integer getEpisode() {
+        return episode;
+    }
+
+    public void setEpisode(Integer episode) {
+        this.episode = episode;
     }
 }

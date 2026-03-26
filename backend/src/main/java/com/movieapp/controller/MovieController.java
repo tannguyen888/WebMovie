@@ -19,6 +19,12 @@ public class MovieController {
         this.movieService = movieService;
     }
 
+    // New: list all movies (frontend uses /api/movies)
+    @GetMapping("/movies")
+    public ResponseEntity<List<Movie>> getAllMovies() {
+        return ResponseEntity.ok(movieService.getAllMovies());
+    }
+
     @GetMapping("/movies/popular")
     public ResponseEntity<?> getPopularMovies() {
         List<Movie> movies = movieService.getPopularMovies();
@@ -43,6 +49,19 @@ public class MovieController {
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "content", movie));
+    }
+
+    @GetMapping("/movies/trending")
+    public ResponseEntity<?> getTrendingMovies(
+            @RequestParam(required = false) String type,
+            @RequestParam(defaultValue = "12") int limit) {
+        List<Movie> movies = movieService.getTrendingMovies(type, limit);
+        String resolvedType = (type == null || type.isBlank()) ? "all" : type.toLowerCase();
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "content", Map.of(
+                        "type", resolvedType,
+                        "movies", movies)));
     }
 
     @GetMapping("/search")

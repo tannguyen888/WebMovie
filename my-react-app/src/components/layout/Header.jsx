@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom"; // import Link
+import { NavLink } from "react-router-dom";
 
-const Header = ({ onSearch }) => {
+const Header = ({ onSearch = () => {} }) => {
   const [value, setValue] = useState("");
 
   const handleChange = (e) => {
@@ -14,19 +14,32 @@ const Header = ({ onSearch }) => {
     onSearch(value);
   };
 
+  const navLinks = [
+    { to: "/", label: "Home", end: true },
+    { to: "/movies", label: "Movies" },
+    { to: "/favorites", label: "Favorites" },
+    { to: "/tv-shows", label: "TV Shows" },
+    { to: "/register", label: "Register" },
+    { to: "/login", label: "Login" },
+  ];
+
+  const getNavClass = ({ isActive }) =>
+    `text-sm font-medium uppercase tracking-wide transition-all duration-200 relative pb-1 text-white/70 hover:text-white after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:bg-red-600 after:transition-all after:duration-200 after:content-[''] hover:after:w-full ${
+      isActive ? "text-white after:w-full" : "after:w-0"
+    }`;
+
   return (
-    <div className="p-4 bg-black flex items-center justify-between">
+    <div className="p-4 bg-black/90 backdrop-blur flex items-center justify-between sticky top-0 z-50">
       <div className="flex items-center space-x-4">
         <h1 className="text-[40px] uppercase font-bold text-red-700">
           Movie box
         </h1>
         <nav className="flex items-center space-x-6">
-          <Link to="/" className="text-white">Home</Link>
-          <Link to="/movies" className="text-white">Movies</Link>
-          <Link to="/favorites" className="text-white">Favorites</Link>
-          <Link to="/tv-shows" className="text-white">TV Shows</Link>
-          <Link to="/register" className="text-white">Register</Link>
-          <Link to="/login" className="text-white">Login</Link>
+          {navLinks.map((item) => (
+            <NavLink key={item.to} to={item.to} end={item.end} className={getNavClass}>
+              {item.label}
+            </NavLink>
+          ))}
         </nav>
       </div>
 
