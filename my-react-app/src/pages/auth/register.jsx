@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const Register = () => {
     const [form, setForm] = useState({ username: "", email: "", password: "" });
+    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -11,10 +15,11 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:8080/api/auth/register", form);
-            alert("Đăng ký thành công");
+            const res = await axios.post("http://localhost:8080/api/auth/register", form);
+            login(res.data.username, res.data.token);
+            navigate("/");
         } catch (err) {
-            alert(err.response?.data || "Register lỗi");
+            alert(err.response?.data?.message || "Đăng ký thất bại, thử lại.");
         }
     };
 

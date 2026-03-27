@@ -1,23 +1,24 @@
 import PropTypes from "prop-types";
-import { useContext, useState, useEffect } from "react";
-import { MovieContext } from "../context/MovieContext.jsx";
-import { backendApi } from "../services/apiClient";
-const MovieSearch = ({ data }) => {
-  const { handleMovieSearch } = useContext(MovieContext);
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const API = "http://localhost:8080/api";
+
+const MovieSearch = ({ results = [], query = "" }) => {
+  const navigate = useNavigate();
   const [favorites, setFavorites] = useState(new Set());
   const [genres, setGenres] = useState([]);
   const [hoveredMovie, setHoveredMovie] = useState(null);
 
   useEffect(() => {
-    // Fetch genres from backend
-    backendApi.get("http://localhost:8080/api/genres")
+    axios.get(`${API}/genres`)
       .then(res => setGenres(res.data))
       .catch(err => console.error("Error fetching genres:", err));
 
-    // Fetch user favorites
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (token) {
-      backendApi.get("/api/favorites", {
+      axios.get(`${API}/favorites`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then(res => {
         const favSet = new Set(res.data.map(f => f.movieId));
@@ -27,15 +28,15 @@ const MovieSearch = ({ data }) => {
   }, []);
 
   const toggleFavorite = async (movie) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (!token) {
-      alert("Please login to add favorites");
+      alert("Vui lòng đăng nhập để thêm yêu thích");
       return;
     }
     const isFav = favorites.has(movie.id.toString());
     try {
       if (isFav) {
-        await backendApi.delete("/api/favorites", {
+        await axios.delete(`${API}/favorites`, {
           params: { movieId: movie.id },
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -45,11 +46,11 @@ const MovieSearch = ({ data }) => {
           return newSet;
         });
       } else {
-        await backendApi.post("/api/favorites", null, {
+        await axios.post(`${API}/favorites`, null, {
           params: {
             movieId: movie.id,
             title: movie.title || movie.name,
-            posterPath: movie.poster_path
+            posterPath: movie.posterPath || movie.poster_path,
           },
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -62,17 +63,22 @@ const MovieSearch = ({ data }) => {
 
   return (
     <div className="px-6">
-      <h2 className="text-xl font-bold mb-4">Kết quả tìm kiếm</h2>
+      <h2 className="text-xl font-bold mb-4 text-white">
+        {query ? `Kết quả cho: "${query}"` : "Tìm kiếm phim"}
+      </h2>
+      {results.length === 0 && <p className="text-gray-400 mt-4">Không có kết quả.</p>}
 
       <div className="flex flex-wrap gap-6">
-        {data.map((item) => (
+        {results.map((item) => (
           <div
             key={item.id}
             className="bg-cover bg-no-repeat bg-center w-[200px] h-[300px] relative hover:scale-110 transition-transform duration-500 ease-in-out cursor-pointer group"
             style={{
-              backgroundImage: `url(${import.meta.env.VITE_IMG_URL}${item.poster_path})`,
+              backgroundImage: item.posterPath
+                ? `url(${item.posterPath.startsWith("http") ? item.posterPath : "https://image.tmdb.org/t/p/w500" + item.posterPath})`
+                : `url(${(import.meta.env.VITE_IMG_URL || "https://image.tmdb.org/t/p/w500") + (item.poster_path || "")})`,
             }}
-            onClick={() => handleMovieSearch(item.id)}
+            onClick={() => navigate(`/movie/${item.id}`)}
             onMouseEnter={() => setHoveredMovie(item.id)}
             onMouseLeave={() => setHoveredMovie(null)}
           >
@@ -123,7 +129,8 @@ const MovieSearch = ({ data }) => {
 };
 
 MovieSearch.propTypes = {
-  data: PropTypes.array.isRequired,
+  results: PropTypes.array,
+  query: PropTypes.string,
 };
 
 export default MovieSearch;

@@ -16,12 +16,11 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:8080/api/auth/login", form);
-            alert("Đăng nhập thành công");
-            login(form.username, form.password);
+            const res = await axios.post("http://localhost:8080/api/auth/login", form);
+            login(res.data.username, res.data.token);
             navigate("/");
         } catch (err) {
-            alert(err.response?.data || "Login lỗi");
+            alert(err.response?.data?.message || "Sai tên đăng nhập hoặc mật khẩu");
         }
     };
 

@@ -54,7 +54,7 @@ const TVShows = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div className="absolute inset-x-0 bottom-0 p-3">
-              <h3 className="text-white font-semibold text-sm line-clamp-2">{show.name}</h3>
+              <h3 className="text-white font-semibold text-sm line-clamp-2">{show.title}</h3>
               <p className="text-gray-300 text-xs mt-1">Đánh giá:{show.rating}</p>
             </div>
           </article>

@@ -12,7 +12,7 @@ const Favorites = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (!token) {
       setError("Vui lòng đăng nhập để xem danh sách yêu thích.");
       setLoading(false);

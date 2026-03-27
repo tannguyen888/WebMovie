@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useEffect, useState, useContext } from "react";
 import {
@@ -41,7 +42,7 @@ function AppContent() {
 
   const [results, setResults] = useState([]);
 
-  const hideBannerPaths = ["/login", "/register"];
+  const hideBannerPaths = ["/login", "/register", "/search"];
   const shouldShowBanner = !hideBannerPaths.includes(location.pathname);
 
   
@@ -53,9 +54,11 @@ function AppContent() {
 
     const fetchSearch = async () => {
       try {
-        const res = await fetch(`/api/search?q=${query}`);
+        const res = await fetch(`http://localhost:8080/api/search?q=${encodeURIComponent(query)}`);
         const data = await res.json();
-        setResults(data);
+        // Backend trả: { success, content: { movies: [...], tv: [...] } }
+        const movies = data?.content?.movies || data?.content?.tv || [];
+        setResults(movies);
       } catch (err) {
         console.error("Search error:", err);
       }
