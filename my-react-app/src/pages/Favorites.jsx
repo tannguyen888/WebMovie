@@ -37,7 +37,7 @@ const Favorites = () => {
   }, []);
 
   const removeFavorite = async (movieId) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (!token) return;
 
     try {

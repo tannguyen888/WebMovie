@@ -1,36 +1,71 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+
+import { useEffect, useState, useContext } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+  useSearchParams,
+  Navigate,
+} from "react-router-dom";
+
 import Header from "./components/layout/Header";
 import Banner from "./components/layout/Banner";
 import MovieList from "./pages/MovieList";
 import Favorites from "./pages/Favorites";
-import MovieSearch from "./pages/MovieSearch";
 import MovieDetail from "./pages/MovieDetail";
 import TVShows from "./pages/TVShows";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
-import "./App.css";
+import MovieSearch from "./pages/MovieSearch";
+
+import { AuthContext } from "./context/AuthContext";
+
+
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useContext(AuthContext);
+
+  if (loading) return null;
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
 
 function AppContent() {
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+
+  const query = searchParams.get("q") || "";
+
+  const [results, setResults] = useState([]);
 
   const hideBannerPaths = ["/login", "/register"];
   const shouldShowBanner = !hideBannerPaths.includes(location.pathname);
 
+  
   useEffect(() => {
-    // Check if user is logged in from localStorage
-    const storedUser = localStorage.getItem("currentUser");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Failed to parse user data:", error);
-        localStorage.removeItem("currentUser");
-      }
+    if (!query) {
+      setResults([]);
+      return;
     }
+
+    const fetchSearch = async () => {
+      try {
+        const res = await fetch(`/api/search?q=${query}`);
+        const data = await res.json();
+        setResults(data);
+      } catch (err) {
+        console.error("Search error:", err);
+      }
+    };
+
+    fetchSearch();
+  }, [query]);
+
+ 
+  useEffect(() => {
     setLoading(false);
   }, []);
 
@@ -40,7 +75,9 @@ function AppContent() {
 
   return (
     <div className="app">
-      <Header user={user} setUser={setUser} />
+    
+      <Header />
+
       {shouldShowBanner && <Banner />}
 
       <main className="app-main">
@@ -49,8 +86,23 @@ function AppContent() {
           <Route path="/movies" element={<MovieList />} />
           <Route path="/tv-shows" element={<TVShows />} />
           <Route path="/movie/:id" element={<MovieDetail />} />
-          <Route path="/search" element={<MovieSearch />} />
-          <Route path="/favorites" element={<Favorites />} />
+
+       
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedRoute>
+                <Favorites />
+              </ProtectedRoute>
+            }
+          />
+
+        
+          <Route
+            path="/search"
+            element={<MovieSearch results={results} query={query} />}
+          />
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Routes>
@@ -68,3 +120,4 @@ function App() {
 }
 
 export default App;
+

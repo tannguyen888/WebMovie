@@ -48,14 +48,14 @@ const TVShows = () => {
             onClick={() => navigate(`/movie/${show.id}`)}
           >
             <img
-              src={show.poster_path || show.backdrop_path || "/placeholder.jpg"}
-              alt={show.name}
+             src={show.posterPath || "/placeholder.jpg"}
+              alt={show.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             <div className="absolute inset-x-0 bottom-0 p-3">
               <h3 className="text-white font-semibold text-sm line-clamp-2">{show.name}</h3>
-              <p className="text-gray-300 text-xs mt-1">Đánh giá: {show.vote_average}</p>
+              <p className="text-gray-300 text-xs mt-1">Đánh giá:{show.rating}</p>
             </div>
           </article>
         ))}

@@ -52,7 +52,7 @@ const MovieList = () => {
     };
 
     const fetchFavorites = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       if (!token) return;
       try {
         const res = await axios.get("http://localhost:8080/api/favorites", {

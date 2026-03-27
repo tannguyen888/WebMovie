@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import { useContext, useState, useEffect } from "react";
 import { MovieContext } from "../context/MovieContext.jsx";
-import axios from "axios";
-
+import { backendApi } from "../services/apiClient";
 const MovieSearch = ({ data }) => {
   const { handleMovieSearch } = useContext(MovieContext);
   const [favorites, setFavorites] = useState(new Set());
@@ -11,7 +10,7 @@ const MovieSearch = ({ data }) => {
 
   useEffect(() => {
     // Fetch genres from backend
-    backendApi.get("/api/movies/genres")
+    backendApi.get("http://localhost:8080/api/genres")
       .then(res => setGenres(res.data))
       .catch(err => console.error("Error fetching genres:", err));
 
