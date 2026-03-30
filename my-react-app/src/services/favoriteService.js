@@ -32,6 +32,21 @@ export const addFavorite = async (movieId) => {
     throw error.response?.data || { message: "Failed to add favorite" };
   }
 };
+/**
+ * Update movie in favorites
+ * @param {number} movieId - Movie to update
+ * @returns {Promise} Response
+ */
+export const updateFavorites = async (movieId) => {
+  try {
+    const response = await axios.post(`${API_FAVORITES}`, null, {
+      params: { movieId },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to update favorite" };
+  }
+};
 
 /**
  * Remove movie from favorites

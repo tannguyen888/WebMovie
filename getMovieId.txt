@@ -1,0 +1,429 @@
+ /**
+     * TODO: Viết method addReview()
+     * 
+     * Parameters:
+     * - Long userId: User ID
+     * - Long movieId: Movie ID
+     * - ReviewRequest request: {rating, comment}
+     * 
+     * Steps:
+     * 1️⃣ TODO: Validate rating
+     * - Check: 1 <= rating <= 5
+     * - Throw: InvalidRatingException nếu sai
+     * 
+     * 2️⃣ TODO: Validate comment
+     * - Check: comment.length() <= 500
+     * - Throw: InvalidCommentException nếu sai
+     * 
+     * 3️⃣ TODO: Fetch user by userId
+     * - userRepository.findById(userId)
+     * - Throw: ResourceNotFoundException nếu không tìm thấy
+     * 
+     * 4️⃣ TODO: Fetch movie by movieId
+     * - movieRepository.findById(movieId)
+     * - Throw: ResourceNotFoundException nếu không tìm thấy
+     * 
+     * 5️⃣ TODO: Check duplicate review
+     * - reviewRepository.existsByUserIdAndMovieId(userId, movieId)
+     * - Throw: DuplicateReviewException nếu đã tồn tại
+     * 
+     * 6️⃣ TODO: Create new Review object
+     * - new Review(userId, movieId, rating, comment)
+     * - Set createdAt = LocalDateTime.now()
+     * 
+     * 7️⃣ TODO: Save to database
+     * - reviewRepository.save(review)
+     * 
+     * 8️⃣ TODO: Convert to ReviewResponse DTO
+     * - ReviewResponse.from(savedReview)
+     * 
+     * Return: ReviewResponse
+     */
+    public ReviewResponse getReviewById(Long id) {
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+        return ReviewResponse.from(review);
+    }
+
+    /**
+     * TODO: Viết method getUserReviewForMovie()
+     * 
+     * Parameters:
+     * - Long userId
+     * - Long movieId
+     * 
+     * Steps:
+     * 1️⃣ TODO: Fetch user & movie (validate exists)
+     * 2️⃣ TODO: Find review by user & movie
+     * - reviewRepository.findByUserIdAndMovieId(userId, movieId)
+     * - .orElseThrow()
+     * 3️⃣ TODO: Convert và return ReviewResponse
+     * 
+     * Return: ReviewResponse
+     */
+    public ReviewResponse getUserReviewForMovie(Long userId, Long movieId) {
+        // TODO: Implement here
+        return null;
+    }
+
+    /**
+     * ============================================
+     * 📖 READ - Lấy danh sách reviews
+     * ============================================
+     */
+
+    /**
+     * TODO: Viết method getMovieReviews()
+     * 
+     * Parameters:
+     * - Long movieId
+     * - Pageable pageable: {page, size, sort}
+     * 
+     * Steps:
+     * 1️⃣ TODO: Check movie exists
+     * - movieRepository.existsById(movieId)
+     * - orElseThrow ResourceNotFoundException
+     * 
+     * 2️⃣ TODO: Query reviews với pagination
+     * - reviewRepository.findByMovieId(movieId, pageable)
+     * - Trả về Page<Review>
+     * 
+     * 3️⃣ TODO: Convert mỗi review sang ReviewResponse
+     * - page.map(ReviewResponse::from)
+     * 
+     * Return: Page<ReviewResponse>
+     */
+    public Page<ReviewResponse> getMovieReviews(Long movieId, Pageable pageable) {
+        // TODO: Implement here
+        return null;
+    }
+
+    /**
+     * TODO: Viết method getUserReviews()
+     * 
+     * Parameters:
+     * - Long userId
+     * - Pageable pageable
+     * 
+     * Gets all reviews by user
+     */
+    public Page<ReviewResponse> getUserReviews(Long userId, Pageable pageable) {
+        // TODO: Implement here
+        return null;
+    }
+
+    /**
+     * ============================================
+     * 📊 READ - Thống kê
+     * ============================================
+     */
+
+    /**
+     * TODO: Viết method getAverageRating()
+     * 
+     * Parameters:
+     * - Long movieId
+     * 
+     * Steps:
+     * 1️⃣ TODO: Check movie exists
+     * 2️⃣ TODO: Get average rating
+     * - reviewRepository.getAverageRating(movieId)
+     * - Custom @Query method
+     * 3️⃣ TODO: Return 0.0 nếu không có reviews
+     * 
+     * Return: Double (average)
+     */
+    public Double getAverageRating(Long movieId) {
+        // TODO: Implement here
+        return null;
+    }
+
+    /**
+     * TODO: Viết method getReviewCount()
+     * 
+     * Parameters:
+     * - Long movieId
+     * 
+     * Steps:
+     * 1️⃣ TODO: Count reviews
+     * - reviewRepository.countByMovieId(movieId)
+     * 
+     * Return: long
+     */
+    public long getReviewCount(Long movieId) {
+        // TODO: Implement here
+        return 0;
+    }
+
+    /**
+     * ============================================
+     * 🔄 UPDATE - Cập nhật review
+     * ============================================
+     */
+
+    /**
+     * TODO: Viết method updateReview()
+     * 
+     * Parameters:
+     * - Long reviewId: Review cần update
+     * - Long userId: Ai update (check ownership)
+     * - ReviewRequest request: Dữ liệu mới
+     * 
+     * Steps:
+     * 1️⃣ TODO: Fetch review by id
+     * - reviewRepository.findById(reviewId)
+     * - orElseThrow ResourceNotFoundException
+     * 
+     * 2️⃣ TODO: Check ownership
+     * - if (review.getUserId() != userId)
+     * - throw UnauthorizedException("Only owner can edit")
+     * 
+     * 3️⃣ TODO: Validate new data
+     * - Validate rating (1-5)
+     * - Validate comment length
+     * 
+     * 4️⃣ TODO: Update fields
+     * - review.setRating(request.getRating())
+     * - review.setComment(request.getComment())
+     * - TODO: Set updatedAt = LocalDateTime.now()
+     * 
+     * 5️⃣ TODO: Save to database
+     * - reviewRepository.save(review)
+     * 
+     * 6️⃣ TODO: Convert và return ReviewResponse
+     * 
+     * Return: ReviewResponse
+     */
+    @Transactional
+    public ReviewResponse updateReview(Long reviewId, Long userId, ReviewRequest request) {
+        // TODO: Implement here
+        return null;
+    }
+
+    /**
+     * ============================================
+     * 🗑️ DELETE - Xóa review
+     * ============================================
+     */
+
+    /**
+     * TODO: Viết method deleteReview()
+     * 
+     * Parameters:
+     * - Long reviewId
+     * - Long userId: Ai xóa (check ownership)
+     * - String userRole: "USER" hoặc "ADMIN"
+     * 
+     * Steps:
+     * 1️⃣ TODO: Fetch review by id
+     * - reviewRepository.findById(reviewId)
+     * - orElseThrow ResourceNotFoundException
+     * 
+     * 2️⃣ TODO: Check permission
+     * - boolean isOwner = review.getUserId().equals(userId)
+     * - boolean isAdmin = "ADMIN".equals(userRole)
+     * - if (!isOwner && !isAdmin) throw UnauthorizedException
+     * 
+     * 3️⃣ TODO: Delete
+     * - reviewRepository.deleteById(reviewId)
+     * 
+     * Return: void
+     */
+    @Transactional
+    public void deleteReview(Long reviewId, Long userId, String userRole) {
+        // TODO: Implement here
+    }
+
+    /**
+     * ============================================
+     * 🧹 HELPER METHODS
+     * ============================================
+     */
+
+    /**
+     * TODO: Viết method canUserReview()
+     * 
+     * Check nếu user có thể review phim được không
+     * (chỉ review 1 lần)
+     * 
+     * Parameters:
+     * - Long userId
+     * - Long movieId
+     * 
+     * Steps:
+     * 1️⃣ TODO: Check if review exists
+     * - !reviewRepository.existsByUserIdAndMovieId(userId, movieId)
+     * 
+     * Return: boolean
+     */
+    public boolean canUserReview(Long userId, Long movieId) {
+        // TODO: Implement here
+        return false;
+    }
+
+    /**
+     * TODO: (Optional) Viết method deleteAllByMovie()
+     * 
+     * Xóa tất cả reviews của 1 phim
+     * (khi admin delete phim)
+     * 
+     * Parameters:
+     * - Long movieId
+     */
+    @Transactional
+    public void deleteAllByMovie(Long movieId) {
+        // TODO: Implement here
+    }
+
+    /**
+     * TODO: (Optional) Viết method deleteAllByUser()
+     * 
+     * Xóa tất cả reviews của 1 user
+     * (khi user delete account)
+     * 
+     * Parameters:
+     * - Long userId
+     */
+    @Transactional
+    public void deleteAllByUser(Long userId) {
+        // TODO: Implement here
+    }
+
+    public Review saveReview(Review review) {
+        return reviewRepository.save(review);
+    }
+
+
+
+
+
+import PropTypes from "prop-types";
+import { useContext, useState, useEffect } from "react";
+import { MovieContext } from "./MovieContext.jsx";
+import { backendApi } from "./api/axios";
+
+const MovieSearch = ({ data }) => {
+  const { handleMovieSearch } = useContext(MovieContext);
+  const [favorites, setFavorites] = useState(new Set());
+  const [genres, setGenres] = useState([]);
+  const [hoveredMovie, setHoveredMovie] = useState(null);
+
+  useEffect(() => {
+    // Fetch genres from backend
+    backendApi.get("/api/movies/genres")
+      .then(res => setGenres(res.data))
+      .catch(err => console.error("Error fetching genres:", err));
+
+    // Fetch user favorites
+    const token = localStorage.getItem("token");
+    if (token) {
+      backendApi.get("/api/favorites", {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(res => {
+        const favSet = new Set(res.data.map(f => f.movieId));
+        setFavorites(favSet);
+      }).catch(err => console.error(err));
+    }
+  }, []);
+
+  const toggleFavorite = async (movie) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login to add favorites");
+      return;
+    }
+    const isFav = favorites.has(movie.id.toString());
+    try {
+      if (isFav) {
+        await backendApi.delete("/api/favorites", {
+          params: { movieId: movie.id },
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setFavorites(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(movie.id.toString());
+          return newSet;
+        });
+      } else {
+        await backendApi.post("/api/favorites", null, {
+          params: {
+            movieId: movie.id,
+            title: movie.title || movie.name,
+            posterPath: movie.poster_path
+          },
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setFavorites(prev => new Set(prev).add(movie.id.toString()));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <div className="px-6">
+      <h2 className="text-xl font-bold mb-4">Kết quả tìm kiếm</h2>
+
+      <div className="flex flex-wrap gap-6">
+        {data.map((item) => (
+          <div
+            key={item.id}
+            className="bg-cover bg-no-repeat bg-center w-[200px] h-[300px] relative hover:scale-110 transition-transform duration-500 ease-in-out cursor-pointer group"
+            style={{
+              backgroundImage: `url(${import.meta.env.VITE_IMG_URL}${item.poster_path})`,
+            }}
+            onClick={() => handleMovieSearch(item.id)}
+            onMouseEnter={() => setHoveredMovie(item.id)}
+            onMouseLeave={() => setHoveredMovie(null)}
+          >
+            <button
+              className="absolute top-2 right-2 z-20 text-red-500 text-2xl"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFavorite(item);
+              }}
+            >
+              {favorites.has(item.id.toString()) ? "❤️" : "🤍"}
+            </button>
+
+            {/* Genres dropdown on hover */}
+            {hoveredMovie === item.id && genres.length > 0 && (
+              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 text-white p-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="text-xs font-semibold mb-1">Genres:</div>
+                <div className="flex flex-wrap gap-1">
+                  {genres.slice(0, 3).map((genre) => (
+                    <span
+                      key={genre.id}
+                      className="bg-blue-600 text-xs px-2 py-1 rounded"
+                    >
+                      {genre.name}
+                    </span>
+                  ))}
+                  {genres.length > 3 && (
+                    <span className="text-xs text-gray-300">+{genres.length - 3} more</span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* overlay */}
+            <div className="bg-black w-full h-full opacity-40 absolute top-0 left-0" />
+
+            {/* title */}
+            <div className="relative p-4 flex items-end justify-center h-full text-center">
+              <h3 className="text-sm uppercase font-semibold">
+                {item.name || item.title || item.original_title}
+              </h3>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+MovieSearch.propTypes = {
+  data: PropTypes.array.isRequired,
+};
+
+export default MovieSearch;

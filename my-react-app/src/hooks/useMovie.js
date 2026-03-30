@@ -16,6 +16,18 @@ export function useMovie() {
     // 2. Handle loading state
     // 3. Handle error state
     // 4. Update movies state
+    try {
+      setLoading(true);
+      movieService.getMovies(page, size).then((data) => {
+        setMovies(data || []);
+      });
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      setMovies([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const searchMovies = useCallback(async (keyword) => {
@@ -23,6 +35,20 @@ export function useMovie() {
     // 1. Call movieService.searchMovies()
     // 2. Update movies state with results
     // 3. Handle errors
+
+    try{
+      setLoading(true);
+      movieService.searchMovies(keyword).then((data) => {
+        setMovies(data || []);
+      });
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      setMovies([]);
+    }
+    finally {
+      setLoading(false);
+    }
   }, []);
 
   return {
