@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import GoogleLoginButton from "./react-google-login";
 
 const Login = () => {
     const [form, setForm] = useState({ username: "", password: "" });
@@ -56,6 +57,8 @@ const Login = () => {
                     <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300" type="submit">
                         Login
                     </button>
+                    <h1>Google Login</h1>
+      <GoogleLoginButton />
                 </form>
             </div>
         </div>

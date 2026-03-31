@@ -8,6 +8,10 @@ import com.movieapp.model.User;
 import com.movieapp.repository.UserRepository;
 import com.movieapp.security.JwtService;
 import com.movieapp.util.Constants;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -91,5 +95,19 @@ public class AuthService {
 
                 .orElseThrow(() -> new InvalidCredentialsException(Constants.INVALID_TOKEN));
 
+    }
+
+    public AuthResponse loginWithGoogle(String token) {
+        return userRepository.findByGoogleToken(token)
+                .map(user -> {
+                    String jwtToken = jwtService.generateToken(user.getUsername());
+                    AuthResponse response = new AuthResponse();
+                    response.setToken(jwtToken);
+                    response.setMessage(Constants.LOGIN_SUCCESSFUL);
+                    response.setUsername(user.getUsername());
+                    response.setUserId(user.getId());
+                    return response;
+                })
+                .orElseThrow(() -> new InvalidCredentialsException(Constants.INVALID_TOKEN));
     }
 }

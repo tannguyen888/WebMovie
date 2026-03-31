@@ -11,6 +11,7 @@ const GoogleLoginButton = () => {
     const token = response.credential;
     if (token) {
       registerWithGoogle(token)
+      loginWithGoogle(token)
         .then((data) => {
           console.log('Google registration successful: ', data);
           window.location.href = "/"; 
@@ -21,6 +22,29 @@ const GoogleLoginButton = () => {
     }
 
   };
+
+    const loginWithGoogle = async (tokenId) => {
+    try {
+      const response = await fetch("http://localhost:8080/api/login/google", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tokenId }),
+      });
+
+      const data = await response.json();
+      if (data.token) {
+        // Lưu JWT token vào localStorage hoặc sessionStorage
+        localStorage.setItem("jwtToken", data.token);
+      } else {
+        console.error("Login failed", data);
+      }
+    } catch (error) {
+      console.error("Error during login", error);
+    }
+  };
+
 
   return (
     <div>
