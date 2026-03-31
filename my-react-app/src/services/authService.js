@@ -48,6 +48,21 @@ export const register = async (username, email, password) => {
   }
 };
 
+export const registerWithGoogle = async (googleToken) => {
+   try {
+     const response = await axios.post(`${API_AUTH}/register/google`, {
+       token: googleToken,
+     });  
+     if (response.data.token) {
+        localStorage.setItem("authToken", response.data.token);
+        localStorage.setItem("currentUser", JSON.stringify(response.data.user));
+      }
+     return response.data;
+   } catch (error) {
+     throw error.response?.data || { message: "Google registration failed" };
+   }
+}
+
 /**
  * Logout user
  */

@@ -27,6 +27,12 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PostMapping("/register/google")
+    public ResponseEntity<AuthResponse> registerWithGoogle(@RequestBody String token) {
+        AuthResponse response = authService.registerWithGoogle(token);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         AuthResponse response = authService.login(request);

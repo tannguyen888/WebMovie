@@ -76,4 +76,20 @@ public class AuthService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new InvalidCredentialsException(Constants.USER_NOT_FOUND));
     }
+
+    public AuthResponse registerWithGoogle(String token) {
+        return userRepository.findByGoogleToken(token)
+                .map(user -> {
+                    String jwtToken = jwtService.generateToken(user.getUsername());
+                    AuthResponse response = new AuthResponse();
+                    response.setToken(jwtToken);
+                    response.setMessage(Constants.LOGIN_SUCCESSFUL);
+                    response.setUsername(user.getUsername());
+                    response.setUserId(user.getId());
+                    return response;
+                })
+
+                .orElseThrow(() -> new InvalidCredentialsException(Constants.INVALID_TOKEN));
+
+    }
 }
