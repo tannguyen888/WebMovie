@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import axios from "axios";
+import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -15,8 +15,8 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:8080/api/auth/register", form);
-            login(res.data.username, res.data.token);
+            const res = await api.post("/auth/register", form);
+            login({ username: res.data.username }, res.data.token);
             navigate("/");
         } catch (err) {
             alert(err.response?.data?.message || "Đăng ký thất bại, thử lại.");

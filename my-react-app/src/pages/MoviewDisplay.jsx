@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../config/axios";
 
-const API_BASE = "http://localhost:8080/api";
 const FALLBACK_POSTER = "https://via.placeholder.com/300x450";
 
 export default function MoviewDisplay() {
@@ -17,8 +17,8 @@ export default function MoviewDisplay() {
       setLoading(true);
       try {
         const endpoint = type === "movie" ? "/movies/popular" : "/tv/popular";
-        const res = await fetch(`${API_BASE}${endpoint}`);
-        const data = await res.json();
+        const res = await api.get(endpoint);
+        const data = res.data;
         const items = type === "movie" ? (data?.content?.movies || []) : (data?.content?.tv || []);
         setMovies(items);
         setFilteredMovies(items);

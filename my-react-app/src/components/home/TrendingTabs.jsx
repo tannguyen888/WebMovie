@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = "http://localhost:8080/api";
 const FALLBACK_POSTER = "/assets/poster.jpg";
 const TABS = [
   { id: "movie", label: "Phim lẻ" },
@@ -23,7 +22,7 @@ const TrendingTabs = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get(`${API_BASE}/movies/trending`, {
+        const res = await api.get("/movies/trending", {
           params: { type: activeTab, limit: 12 },
         });
         if (!cancelled) {

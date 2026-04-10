@@ -17,6 +17,9 @@ public class ErrorResponse {
     private LocalDateTime timestamp;
     private String path;
 
+    public ErrorResponse() {
+    }
+
     public ErrorResponse(int status, String message, String error) {
         this.status = status;
         this.message = message;

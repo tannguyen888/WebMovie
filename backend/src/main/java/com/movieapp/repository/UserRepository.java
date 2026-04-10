@@ -23,5 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsername(String username);
 
-    Optional<User> findByGoogleToken(String token);
+    // TODO: Re-enable when Google login is configured
+    // Optional<User> findByGoogleToken(String token);
 }

@@ -1,8 +1,7 @@
 /**
  * 🔐 Auth Service - Authentication API calls
  */
-import axios from "axios";
-import { API_AUTH } from "../utils/constants";
+import api from "../config/axios";
 
 /**
  * Login with username and password
@@ -12,7 +11,7 @@ import { API_AUTH } from "../utils/constants";
  */
 export const login = async (username, password) => {
   try {
-    const response = await axios.post(`${API_AUTH}/login`, {
+    const response = await api.post("/auth/login", {
       username,
       password,
     });
@@ -37,7 +36,7 @@ export const login = async (username, password) => {
  */
 export const register = async (username, email, password) => {
   try {
-    const response = await axios.post(`${API_AUTH}/register`, {
+    const response = await api.post("/auth/register", {
       username,
       email,
       password,

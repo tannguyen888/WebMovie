@@ -1,4 +1,5 @@
 import axios from "axios";
+import { TOKEN_KEY } from "../utils/constants";
 
 const api = axios.create({
   baseURL: "https://api.themoviedb.org/3", // TMDB API
@@ -9,7 +10,7 @@ const api = axios.create({
 });
 
 const backendApi = axios.create({
-  baseURL: "http://localhost:8080", // Backend API
+  baseURL: "http://localhost:8081", // Backend API
   headers: {
     "Content-Type": "application/json",
   },
@@ -18,7 +19,7 @@ const backendApi = axios.create({
 // Add interceptor to include token in every request
 backendApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(TOKEN_KEY);
     if (token && !config.url?.includes("/auth/")) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,9 +34,7 @@ backendApi.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
       console.error("Authentication error:", error.response.status);
-      localStorage.removeItem("token");
-      // Optionally redirect to login
-      // window.location.href = "/login";
+      localStorage.removeItem(TOKEN_KEY);
     }
     return Promise.reject(error);
   }

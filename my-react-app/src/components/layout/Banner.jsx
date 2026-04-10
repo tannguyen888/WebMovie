@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../config/axios";
 
 import IconPlay from "/assets/play-button.png";
 import IconRating from "/assets/rating.png";
@@ -59,11 +60,8 @@ const Banner = () => {
 
     const fetchBackendHero = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/movies", { signal: controller.signal });
-        if (!res.ok) {
-          throw new Error(`Backend error ${res.status}`);
-        }
-        const payload = await res.json();
+        const res = await api.get("/movies", { signal: controller.signal });
+        const payload = res.data;
         const list = Array.isArray(payload)
           ? payload
           : payload?.content?.movies || payload?.content || [];
@@ -75,7 +73,7 @@ const Banner = () => {
         }
         throw new Error("Empty movie list");
       } catch (err) {
-        if (err.name === "AbortError") return;
+        if (err.name === "AbortError" || err.name === "CanceledError") return;
         console.error("Backend banner error", err);
         setError("Không tải được dữ liệu backend, hiển thị phim thịnh hành.");
         fetchTmdbHero();

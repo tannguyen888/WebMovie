@@ -1,7 +1,7 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
-import API_AUTH from "../../config/axios";
-import { registerWithGoogle } from "../../services/authService";
+import api from "../../config/axios";
+import { TOKEN_KEY } from "../../utils/constants";
 
 
 
@@ -25,20 +25,11 @@ const GoogleLoginButton = () => {
 
     const loginWithGoogle = async (tokenId) => {
     try {
-      const response = await fetch("http://localhost:8080/api/login/google", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tokenId }),
-      });
-
-      const data = await response.json();
-      if (data.token) {
-        // Lưu JWT token vào localStorage hoặc sessionStorage
-        localStorage.setItem("jwtToken", data.token);
+      const res = await api.post("/auth/login/google", { tokenId });
+      if (res.data?.token) {
+        localStorage.setItem(TOKEN_KEY, res.data.token);
       } else {
-        console.error("Login failed", data);
+        console.error("Login failed", res.data);
       }
     } catch (error) {
       console.error("Error during login", error);

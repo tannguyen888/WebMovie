@@ -1,5 +1,6 @@
 package com.movieapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,10 +24,14 @@ public class Episode {
 
     @Column(columnDefinition = "TEXT")
     private String linkM3u8;
-  
+
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
+    @JsonIgnore
     private Movie movie; // Foreign key to Movie
+
+    public Episode() {
+    }
 
     public Episode(String episodeTitle, String linkEmbed, String linkM3u8, Movie movie) {
         this.episodeTitle = episodeTitle;
@@ -38,30 +43,39 @@ public class Episode {
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getEpisodeTitle() {
         return episodeTitle;
     }
+
     public void setEpisodeTitle(String episodeTitle) {
         this.episodeTitle = episodeTitle;
     }
+
     public String getLinkEmbed() {
         return linkEmbed;
     }
+
     public void setLinkEmbed(String linkEmbed) {
         this.linkEmbed = linkEmbed;
     }
+
     public String getLinkM3u8() {
         return linkM3u8;
     }
+
     public void setLinkM3u8(String linkM3u8) {
         this.linkM3u8 = linkM3u8;
     }
+
     public Movie getMovie() {
         return movie;
     }
+
     public void setMovie(Movie movie) {
         this.movie = movie;
     }

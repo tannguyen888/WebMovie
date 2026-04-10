@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../config/axios";
 import { useNavigate } from "react-router-dom";
 
 const TVShows = () => {
@@ -11,7 +11,7 @@ const TVShows = () => {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/tv/popular");
+        const response = await api.get("/tv/popular");
         const items = response.data?.content?.tv || [];
         setShows(items);
       } catch (err) {

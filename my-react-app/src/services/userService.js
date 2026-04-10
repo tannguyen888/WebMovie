@@ -1,8 +1,7 @@
 /**
  * 👤 UserService - User API calls
  */
-import axios from "axios";
-import { API_USERS } from "../utils/constants";
+import api from "../config/axios";
 
 /**
  * Get current user profile
@@ -10,7 +9,7 @@ import { API_USERS } from "../utils/constants";
  */
 export const getUserProfile = async () => {
   try {
-    const response = await axios.get(`${API_USERS}/profile`);
+    const response = await api.get("/users/profile");
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to fetch profile" };
@@ -24,7 +23,7 @@ export const getUserProfile = async () => {
  */
 export const updateUserProfile = async (userData) => {
   try {
-    const response = await axios.put(`${API_USERS}/profile`, userData);
+    const response = await api.put("/users/profile", userData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to update profile" };
@@ -39,7 +38,7 @@ export const updateUserProfile = async (userData) => {
  */
 export const changePassword = async (oldPassword, newPassword) => {
   try {
-    const response = await axios.post(`${API_USERS}/change-password`, {
+    const response = await api.post("/users/change-password", {
       oldPassword,
       newPassword,
     });

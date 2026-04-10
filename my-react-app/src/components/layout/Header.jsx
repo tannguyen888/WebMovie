@@ -5,6 +5,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 const Header = () => {
   const [value, setValue] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   const { isAuthenticated, user, logout } = useContext(AuthContext);
@@ -16,7 +17,12 @@ const Header = () => {
   const handleClick = () => {
     if (value.trim()) {
       navigate(`/search?q=${encodeURIComponent(value.trim())}`);
+      setMenuOpen(false);
     }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleClick();
   };
 
   const navLinks = isAuthenticated
@@ -25,6 +31,7 @@ const Header = () => {
         { to: "/movies", label: "Movies" },
         { to: "/favorites", label: "Favorites" },
         { to: "/tv-shows", label: "TV Shows" },
+        { to: "/admin/movies", label: "Admin" },
       ]
     : [
         { to: "/login", label: "Login" },
@@ -37,15 +44,15 @@ const Header = () => {
     }`;
 
   return (
-    <div className="p-4 bg-black/90 backdrop-blur flex items-center justify-between sticky top-0 z-50">
-      
-    
-      <div className="flex items-center space-x-4">
-        <h1 className="text-[40px] uppercase font-bold text-red-700">
+    <header className="bg-black/90 backdrop-blur sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Logo */}
+        <h1 className="text-2xl md:text-[40px] uppercase font-bold text-red-700 shrink-0">
           Movie box
         </h1>
 
-        <nav className="flex items-center space-x-6">
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((item) => (
             <NavLink
               key={item.to}
@@ -57,38 +64,100 @@ const Header = () => {
             </NavLink>
           ))}
         </nav>
-      </div>
 
-      {isAuthenticated && (
-        <span className="text-white/70 text-sm">
-          Xin chào, {user?.username}
-          <button
-            onClick={logout}
-            className="ml-3 text-red-500 hover:underline"
-          >
-            Logout
-          </button>
-        </span>
-      )}
+        {/* Desktop search + user */}
+        <div className="hidden md:flex items-center space-x-4">
+          <div className="flex">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={value}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              className="px-3 py-1.5 rounded-l-md border border-gray-600 bg-gray-800 text-white text-sm focus:outline-none focus:border-red-500 w-40 lg:w-56"
+            />
+            <button
+              onClick={handleClick}
+              className="bg-red-700 text-white px-3 py-1.5 rounded-r-md hover:bg-red-800 transition text-sm"
+            >
+              Search
+            </button>
+          </div>
 
- 
-      <div className="flex items-center space-x-4">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={value}
-          onChange={handleChange}
-          className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none"
-        />
+          {isAuthenticated && (
+            <span className="text-white/70 text-sm whitespace-nowrap">
+              {user?.username}
+              <button
+                onClick={logout}
+                className="ml-2 text-red-500 hover:underline"
+              >
+                Logout
+              </button>
+            </span>
+          )}
+        </div>
 
+        {/* Hamburger button (mobile) */}
         <button
-          onClick={handleClick}
-          className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-800 transition duration-300"
+          className="md:hidden text-white p-2"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle menu"
         >
-          Search
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {menuOpen ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
         </button>
       </div>
-    </div>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-black/95 border-t border-gray-800 px-4 pb-4 space-y-3">
+          <nav className="flex flex-col space-y-2 pt-2">
+            {navLinks.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={getNavClass}
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="flex mt-3">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={value}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              className="flex-1 px-3 py-2 rounded-l-md border border-gray-600 bg-gray-800 text-white text-sm focus:outline-none"
+            />
+            <button
+              onClick={handleClick}
+              className="bg-red-700 text-white px-4 py-2 rounded-r-md hover:bg-red-800 transition text-sm"
+            >
+              Search
+            </button>
+          </div>
+
+          {isAuthenticated && (
+            <div className="flex items-center justify-between text-sm pt-2">
+              <span className="text-white/70">Xin chào, {user?.username}</span>
+              <button onClick={logout} className="text-red-500 hover:underline">
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </header>
   );
 };
 

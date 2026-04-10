@@ -14,6 +14,9 @@ public class AuthRequest {
     private String password;
     private String email;
 
+    public AuthRequest() {
+    }
+
     public String getUsername() {
         return username;
     }

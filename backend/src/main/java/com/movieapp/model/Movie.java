@@ -41,6 +41,9 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Episode> episodes; // Danh sách các tập phim
 
+    public Movie() {
+    }
+
     public Movie(String title, String genre, String description, String posterPath, String releaseYear, Integer ep) {
         this.title = title;
         this.genre = genre;

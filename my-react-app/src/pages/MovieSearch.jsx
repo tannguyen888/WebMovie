@@ -1,9 +1,7 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../config/axios";
 import { useNavigate } from "react-router-dom";
-
-const API = "http://localhost:8080/api";
 
 const MovieSearch = ({ results = [], query = "" }) => {
   const navigate = useNavigate();
@@ -12,15 +10,13 @@ const MovieSearch = ({ results = [], query = "" }) => {
   const [hoveredMovie, setHoveredMovie] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API}/genres`)
+    api.get("/genres")
       .then(res => setGenres(res.data))
       .catch(err => console.error("Error fetching genres:", err));
 
     const token = localStorage.getItem("authToken");
     if (token) {
-      axios.get(`${API}/favorites`, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(res => {
+      api.get("/favorites").then(res => {
         const favSet = new Set(res.data.map(f => f.movieId));
         setFavorites(favSet);
       }).catch(err => console.error(err));
@@ -36,9 +32,8 @@ const MovieSearch = ({ results = [], query = "" }) => {
     const isFav = favorites.has(movie.id.toString());
     try {
       if (isFav) {
-        await axios.delete(`${API}/favorites`, {
-          params: { movieId: movie.id },
-          headers: { Authorization: `Bearer ${token}` }
+        await api.delete("/favorites", {
+          params: { movieId: movie.id }
         });
         setFavorites(prev => {
           const newSet = new Set(prev);
@@ -46,13 +41,12 @@ const MovieSearch = ({ results = [], query = "" }) => {
           return newSet;
         });
       } else {
-        await axios.post(`${API}/favorites`, null, {
+        await api.post("/favorites", null, {
           params: {
             movieId: movie.id,
             title: movie.title || movie.name,
             posterPath: movie.posterPath || movie.poster_path,
-          },
-          headers: { Authorization: `Bearer ${token}` }
+          }
         });
         setFavorites(prev => new Set(prev).add(movie.id.toString()));
       }
@@ -68,11 +62,11 @@ const MovieSearch = ({ results = [], query = "" }) => {
       </h2>
       {results.length === 0 && <p className="text-gray-400 mt-4">Không có kết quả.</p>}
 
-      <div className="flex flex-wrap gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {results.map((item) => (
           <div
             key={item.id}
-            className="bg-cover bg-no-repeat bg-center w-[200px] h-[300px] relative hover:scale-110 transition-transform duration-500 ease-in-out cursor-pointer group"
+            className="bg-cover bg-no-repeat bg-center aspect-[2/3] rounded-lg relative hover:scale-105 transition-transform duration-500 ease-in-out cursor-pointer group overflow-hidden"
             style={{
               backgroundImage: item.posterPath
                 ? `url(${item.posterPath.startsWith("http") ? item.posterPath : "https://image.tmdb.org/t/p/w500" + item.posterPath})`

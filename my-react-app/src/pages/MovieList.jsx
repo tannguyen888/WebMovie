@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import axios from "axios";
+import api from "../config/axios";
 import { useNavigate } from "react-router-dom";
 import TrendingTabs from "../components/home/TrendingTabs";
 
@@ -38,7 +38,7 @@ const MovieList = () => {
     const fetchMovies = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8080/api/movies");
+        const response = await api.get("/movies");
         const list = Array.isArray(response.data)
           ? response.data
           : response.data?.content?.movies || response.data?.content || [];
@@ -55,9 +55,7 @@ const MovieList = () => {
       const token = localStorage.getItem("authToken");
       if (!token) return;
       try {
-        const res = await axios.get("http://localhost:8080/api/favorites", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get("/favorites");
         const favSet = new Set(res.data.map((f) => f.movieId?.toString()));
         setFavorites(favSet);
       } catch (err) {
@@ -70,7 +68,7 @@ const MovieList = () => {
   }, []);
 
   const toggleFavorite = async (movie) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (!token) {
       alert("Please login to add favorites");
       return;
@@ -81,23 +79,19 @@ const MovieList = () => {
 
     try {
       if (isFav) {
-        await axios.delete("http://localhost:8080/api/favorites", {
-          params: { movieId: movie.id },
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await api.delete("/favorites", { params: { movieId: movie.id } });
         setFavorites((prev) => {
           const next = new Set(prev);
           next.delete(movieId);
           return next;
         });
       } else {
-        await axios.post("http://localhost:8080/api/favorites", null, {
+        await api.post("/favorites", null, {
           params: {
             movieId: movie.id,
             title: movie.title,
             posterPath: movie.posterPath,
           },
-          headers: { Authorization: `Bearer ${token}` },
         });
         setFavorites((prev) => new Set(prev).add(movieId));
       }
@@ -107,7 +101,7 @@ const MovieList = () => {
   };
 
   if (loading) return <div className="p-10 text-white">Loading movies...</div>;
-  if (error) return <div className="p-10 text-white text-red-500">{error}</div>;
+  if (error) return <div className="p-10 text-red-500">{error}</div>;
   if (!movies.length) return <div className="p-10 text-white">No movies found</div>;
 
   return (

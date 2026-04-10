@@ -1,8 +1,7 @@
 /**
  * ❤️ Favorite Service - Favorite API calls
  */
-import axios from "axios";
-import { API_FAVORITES } from "../utils/constants";
+import api from "../config/axios";
 
 /**
  * Get user's favorite movies
@@ -10,7 +9,7 @@ import { API_FAVORITES } from "../utils/constants";
  */
 export const getFavorites = async () => {
   try {
-    const response = await axios.get(`${API_FAVORITES}`);
+    const response = await api.get("/favorites");
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to fetch favorites" };
@@ -24,7 +23,7 @@ export const getFavorites = async () => {
  */
 export const addFavorite = async (movieId) => {
   try {
-    const response = await axios.post(`${API_FAVORITES}`, null, {
+    const response = await api.post("/favorites", null, {
       params: { movieId },
     });
     return response.data;
@@ -32,6 +31,7 @@ export const addFavorite = async (movieId) => {
     throw error.response?.data || { message: "Failed to add favorite" };
   }
 };
+
 /**
  * Update movie in favorites
  * @param {number} movieId - Movie to update
@@ -39,7 +39,7 @@ export const addFavorite = async (movieId) => {
  */
 export const updateFavorites = async (movieId) => {
   try {
-    const response = await axios.post(`${API_FAVORITES}`, null, {
+    const response = await api.post("/favorites", null, {
       params: { movieId },
     });
     return response.data;
@@ -55,7 +55,7 @@ export const updateFavorites = async (movieId) => {
  */
 export const removeFavorite = async (movieId) => {
   try {
-    const response = await axios.delete(`${API_FAVORITES}/${movieId}`);
+    const response = await api.delete(`/favorites/${movieId}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to remove favorite" };

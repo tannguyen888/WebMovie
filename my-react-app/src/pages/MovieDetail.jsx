@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../config/axios";
 
 const MovieDetail = () => {
   const { id } = useParams();
@@ -13,7 +13,7 @@ const MovieDetail = () => {
     const fetchMovie = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:8080/api/movies/${id}`);
+        const res = await api.get(`/movies/${id}`);
         // backend wraps in { success, content }
         const data = res.data?.content || res.data;
         setMovie(data);

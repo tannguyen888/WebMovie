@@ -2,17 +2,31 @@
  * ⏳ LoadingSpinner Component
  * Loading indicator
  */
-import "./LoadingSpinner.css";
 
 export function LoadingSpinner({ size = "md", fullScreen = false }) {
-  // TODO:
-  // 1. Create spinner animation
-  // 2. Support size variants (sm, md, lg)
-  // 3. Option for fullscreen overlay
+  const sizeClasses = {
+    sm: "w-5 h-5 border-2",
+    md: "w-8 h-8 border-3",
+    lg: "w-12 h-12 border-4",
+  };
+
+  const spinner = (
+    <div
+      className={`${sizeClasses[size]} border-gray-600 border-t-red-600 rounded-full animate-spin`}
+    />
+  );
+
+  if (fullScreen) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        {spinner}
+      </div>
+    );
+  }
 
   return (
-    <div className={`spinner spinner-${size} ${fullScreen ? "fullscreen" : ""}`}>
-      {/* Spinner animation */}
+    <div className="flex items-center justify-center py-10">
+      {spinner}
     </div>
   );
 }

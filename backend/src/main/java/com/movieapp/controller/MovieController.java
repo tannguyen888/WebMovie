@@ -73,4 +73,24 @@ public class MovieController {
                         "movies", results,
                         "tv", results)));
     }
+
+    // ===== CRUD Endpoints =====
+
+    @PostMapping("/movies")
+    public ResponseEntity<Movie> createMovie(@RequestBody Movie movie) {
+        Movie saved = movieService.saveMovie(movie);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PutMapping("/movies/{id}")
+    public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movie) {
+        Movie updated = movieService.updateMovie(id, movie);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/movies/{id}")
+    public ResponseEntity<?> deleteMovie(@PathVariable Long id) {
+        movieService.deleteMovie(id);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Movie deleted"));
+    }
 }

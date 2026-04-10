@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import api from "../config/axios";
 
-const API_BASE = "http://localhost:8080/api";
 const FALLBACK_POSTER = "";
 
 export default function MoviePlayer() {
@@ -15,13 +15,13 @@ export default function MoviePlayer() {
 
   // Fetch movie details
   useEffect(() => {
+    const controller = new AbortController();
     const fetchMovie = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE}/movies/${id}`);
-        if (!res.ok) throw new Error("Movie not found");
-        const data = await res.json();
-        const movieData = data?.content || data;
+        const res = await api.get(`/movies/${id}`, { signal: controller.signal });
+        if (!res.data) throw new Error("Movie not found");
+        const movieData = res.data?.content || res.data;
         
         setMovie(movieData);
         
@@ -45,6 +45,7 @@ export default function MoviePlayer() {
           setSelectedSource(parsedSources[0]);
         }
       } catch (err) {
+        if (err.name === "CanceledError") return;
         console.error("Fetch error:", err);
         setError(err.message);
       } finally {
@@ -53,6 +54,7 @@ export default function MoviePlayer() {
     };
 
     if (id) fetchMovie();
+    return () => controller.abort();
   }, [id]);
 
   const posterUrl = (movie) =>

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../config/axios";
+import { TOKEN_KEY } from "../../utils/constants";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -15,11 +16,11 @@ const handleLogin = async () => {
   setLoading(true);
   setError("");
   try {
-    const res = await backendApi.post("/api/auth/login", null, {
+    const res = await api.post("/auth/login", null, {
       params: { username, password },
     });
     if (res.data && res.data.token) {
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem(TOKEN_KEY, res.data.token);
       window.location.href = "/";
     } else {
       setError("Login thất bại: Không nhận được token");

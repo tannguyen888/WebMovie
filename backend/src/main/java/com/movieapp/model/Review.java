@@ -49,6 +49,9 @@ public class Review {
         updatedAt = LocalDateTime.now();
     }
 
+    public Review() {
+    }
+
     public Review(Long userId, Long movieId, int rating, String comment) {
         this.userId = userId;
         this.movieId = movieId;

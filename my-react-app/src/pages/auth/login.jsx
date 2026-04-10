@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../config/axios";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
@@ -17,8 +17,8 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:8080/api/auth/login", form);
-            login(res.data.username, res.data.token);
+            const res = await api.post("/auth/login", form);
+            login({ username: res.data.username }, res.data.token);
             navigate("/");
         } catch (err) {
             alert(err.response?.data?.message || "Sai tên đăng nhập hoặc mật khẩu");

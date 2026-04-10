@@ -10,6 +10,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
+import api from "./config/axios";
 import Header from "./components/layout/Header";
 import Banner from "./components/layout/Banner";
 import MovieList from "./pages/MovieList";
@@ -19,6 +20,7 @@ import TVShows from "./pages/TVShows";
 import Login from "./pages/auth/login";
 import Register from "./pages/auth/register";
 import MovieSearch from "./pages/MovieSearch";
+import AdminMovies from "./pages/AdminMovies";
 
 import { AuthContext } from "./context/AuthContext";
 
@@ -54,9 +56,8 @@ function AppContent() {
 
     const fetchSearch = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/search?q=${encodeURIComponent(query)}`);
-        const data = await res.json();
-        // Backend trả: { success, content: { movies: [...], tv: [...] } }
+        const res = await api.get("/search", { params: { q: query } });
+        const data = res.data;
         const movies = data?.content?.movies || data?.content?.tv || [];
         setResults(movies);
       } catch (err) {
@@ -108,6 +109,7 @@ function AppContent() {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin/movies" element={<AdminMovies />} />
         </Routes>
       </main>
     </div>

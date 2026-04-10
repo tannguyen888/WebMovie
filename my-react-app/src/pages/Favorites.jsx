@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../config/axios";
 import { useNavigate } from "react-router-dom";
 
 const FALLBACK_POSTER = "/assets/poster.jpg";
@@ -21,9 +21,7 @@ const Favorites = () => {
 
     const fetchFavorites = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/favorites", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get("/favorites");
         setFavorites(res.data || []);
       } catch (err) {
         console.error("Error fetching favorites:", err);
@@ -41,10 +39,7 @@ const Favorites = () => {
     if (!token) return;
 
     try {
-      await axios.delete("http://localhost:8080/api/favorites", {
-        params: { movieId },
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete("/favorites", { params: { movieId } });
       setFavorites((prev) => prev.filter((f) => f.movieId !== movieId));
     } catch (err) {
       console.error("Error removing favorite:", err);
@@ -72,11 +67,11 @@ const Favorites = () => {
   return (
     <div className="px-6">
       <h2 className="text-2xl font-bold mb-6 text-white">My Favorites</h2>
-      <div className="flex flex-wrap gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         {favorites.map((fav) => (
           <div
             key={fav.id || fav.movieId}
-            className="bg-cover bg-no-repeat bg-center w-[200px] h-[300px] relative hover:scale-110 transition-transform duration-500 ease-in-out cursor-pointer"
+            className="bg-cover bg-no-repeat bg-center aspect-[2/3] rounded-lg relative hover:scale-105 transition-transform duration-500 ease-in-out cursor-pointer overflow-hidden"
             style={{
               backgroundImage: `url(${getPosterUrl(fav.posterPath)})`,
             }}

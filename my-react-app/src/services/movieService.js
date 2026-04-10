@@ -1,8 +1,7 @@
 /**
  * 🎬 Movie Service - Movie API calls
  */
-import axios from "axios";
-import { API_MOVIES } from "../utils/constants";
+import api from "../config/axios";
 
 /**
  * Get all movies with pagination
@@ -12,7 +11,7 @@ import { API_MOVIES } from "../utils/constants";
  */
 export const getMovies = async (page = 0, size = 20) => {
   try {
-    const response = await axios.get(`${API_MOVIES}?page=${page}&size=${size}`);
+    const response = await api.get(`/movies?page=${page}&size=${size}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to fetch movies" };
@@ -26,7 +25,7 @@ export const getMovies = async (page = 0, size = 20) => {
  */
 export const getMovieById = async (id) => {
   try {
-    const response = await axios.get(`${API_MOVIES}/${id}`);
+    const response = await api.get(`/movies/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Movie not found" };
@@ -40,7 +39,7 @@ export const getMovieById = async (id) => {
  */
 export const searchMovies = async (keyword) => {
   try {
-    const response = await axios.get(`${API_MOVIES}/search?q=${keyword}`);
+    const response = await api.get(`/movies/search?q=${keyword}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Search failed" };
@@ -54,9 +53,24 @@ export const searchMovies = async (keyword) => {
  */
 export const getMoviesByGenre = async (genre) => {
   try {
-    const response = await axios.get(`${API_MOVIES}?genre=${genre}`);
+    const response = await api.get(`/movies?genre=${genre}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to fetch movies" };
+  }
+};
+
+/**
+ * Get movie episodes
+ * @param {number} movieId - Movie ID
+ * @returns {Promise} List of episodes
+ */
+export const getMovieEpisodes = async (movieId) => {
+  try {
+    const response = await api.get(`/movies/${movieId}`);
+    const data = response.data?.content || response.data;
+    return data?.episodes || [];
+  } catch (error) {
+    throw error.response?.data || { message: "Failed to fetch episodes" };
   }
 };

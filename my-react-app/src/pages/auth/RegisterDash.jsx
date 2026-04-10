@@ -1,5 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../../config/axios";
+import { TOKEN_KEY } from "../../utils/constants";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -25,13 +26,13 @@ export default function Register() {
     setLoading(true);
     setError("");
     try {
-      const res = await backendApi.post("/api/auth/register", {
+      const res = await api.post("/auth/register", {
         username,
         password,
         email,
       });
       if (res.data?.token) {
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem(TOKEN_KEY, res.data.token);
         window.location.href = "/";
       } else {
         setError("Register thất bại: Không nhận được token");

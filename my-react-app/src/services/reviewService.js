@@ -1,8 +1,7 @@
 /**
  * 📝 ReviewService - Review API calls
  */
-import axios from "axios";
-import { API_REVIEWS } from "../utils/constants";
+import api from "../config/axios";
 
 /**
  * Get reviews for a movie
@@ -11,7 +10,7 @@ import { API_REVIEWS } from "../utils/constants";
  */
 export const getMovieReviews = async (movieId) => {
   try {
-    const response = await axios.get(`${API_REVIEWS}/movie/${movieId}`);
+    const response = await api.get(`/reviews/movie/${movieId}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to fetch reviews" };
@@ -26,7 +25,7 @@ export const getMovieReviews = async (movieId) => {
  */
 export const createReview = async (movieId, reviewData) => {
   try {
-    const response = await axios.post(`${API_REVIEWS}/movie/${movieId}`, reviewData);
+    const response = await api.post(`/reviews/movie/${movieId}`, reviewData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to create review" };
@@ -41,7 +40,7 @@ export const createReview = async (movieId, reviewData) => {
  */
 export const updateReview = async (reviewId, reviewData) => {
   try {
-    const response = await axios.put(`${API_REVIEWS}/${reviewId}`, reviewData);
+    const response = await api.put(`/reviews/${reviewId}`, reviewData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to update review" };

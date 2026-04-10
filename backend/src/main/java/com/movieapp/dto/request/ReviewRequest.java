@@ -15,6 +15,9 @@ public class ReviewRequest {
     private int rating;
     private String comment;
 
+    public ReviewRequest() {
+    }
+
     public Long getUserId() {
         return userId;
     }
